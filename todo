@@ -1,0 +1,3 @@
+remove ID column
+rename columns
+maybe normalize gender (0, 1)

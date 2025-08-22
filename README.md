@@ -1,7 +1,17 @@
-# Mall customers segmentation
-
-Using a clustering model to analyze mall customer profiles
+# Mall customers segmentation 
+Using a clustering model to analyze mall customer profiles.
 
 ![monkey mall](https://github.com/user-attachments/assets/aab38752-3ab3-4c27-80fd-ec5c3c411435)
 
-![monkey mall 2](https://github.com/user-attachments/assets/92531c1f-a1e3-4a88-a8d8-fe4d9c78b3a2)
+## The data set
+
+The dataset contains 200 register of mall customers profiles.
+
+The original one can be found in kaggle [here](https://www.kaggle.com/datasets/vjchoudhary7/customer-segmentation-tutorial-in-python).
+
+Our adapted version has 4 columns: `| gender | age | income | spending |`
+
+
+##  The segmentation
+
+### k-means version

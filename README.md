@@ -11,6 +11,8 @@ The original one can be found in kaggle [here](https://www.kaggle.com/datasets/v
 
 Our adapted version has 4 columns: `| gender | age | income | spending |`
 
+https://github.com/user-attachments/assets/80567b1b-e7f8-42a1-9e86-945564a97ea9
+
 
 ##  The segmentation
 

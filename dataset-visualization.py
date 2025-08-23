@@ -15,7 +15,7 @@ age = df["age"].values
 
 # PLOT
 
-fig, ax = plt.subplots()  # return figure object
+fig = plt.figure()  # empty figure without axes
 ax = fig.add_subplot(projection='3d')
 
 ax.set_xlabel('annual-income')
@@ -26,6 +26,7 @@ colors = np.full(is_male.shape, "blue", dtype=object)
 colors[is_male == 0] = "crimson"
 
 ax.scatter(income, score, age, color=colors)
+ax.set_title("Whole dataset")
 
 # SHOW
 plt.show()

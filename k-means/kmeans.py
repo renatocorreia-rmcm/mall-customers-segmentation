@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import random
+import matplotlib.pyplot as plt
 
 def dist(centroids, point):
     """
@@ -38,5 +39,22 @@ def kmeans(df, k: int):
             centroids[i_cluster] = np.sum(clusters[i_cluster], axis=0)/len(clusters[i_cluster])
         
 
-    
+
+
+
+    color = np.array(["red", "green", "blue", "purple", "cyan"])
+    point_colors = np.full(shape=200, fill_value="", dtype=object)
+
+
+    for i, point in enumerate(datapoints):
+        cluster_of_point = np.argmin(dist(centroids, point))
+        point_colors[i] = color[cluster_of_point]
+    print(point_colors)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+    ax.scatter(df['age'].values, df['annual-income'].values, df['spending-score'].values, color=point_colors)
+    ax.scatter(centroids[:, 1], centroids[:, 2], centroids[:, 3], color="black")
+    plt.show()
+
     return centroids

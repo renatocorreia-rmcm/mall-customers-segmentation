@@ -10,6 +10,29 @@ def euclidian_distance(centroids, point):
     return ((centroids-point)**2).sum(axis=1)
 
 
+def aux_variance(cluster):  # todo: implement
+    """
+
+    :param cluster: array of vectors
+    :return: variance of this array
+    """
+    pass
+    v = 0
+    mean = np.sum(cluster)/len(cluster)
+
+
+def variance(clusters):
+    """
+
+    :param clusters: array of cluster that integrates dataset
+    :return: sommatory of the variance of each cluster (total system variance)
+    """
+    tv = 0
+    for cluster in clusters:
+        tv += aux_variance(cluster)
+    return tv
+
+
 def aux_kmeans(df, k: int, get_dist=euclidian_distance):
     """
     :df: dataframe representing dataset
@@ -55,7 +78,14 @@ def kmeans(df, k: int, get_dist=euclidian_distance):
 
     centroids, clusters = aux_kmeans(df, k, get_dist)
 
-    # todo: run aux_kmeans many times. for each result check if variance<min_variance. if it is: replace min_centroids and min_variance to it
+    #todo: run aux_kmeans many times. for each result check if variance<min_variance. if it is: replace min_centroids and min_variance to it
+    variance = variance(clusters)
+    min_variance = 0
+    min_centroids = 0
+
+    if variance<min_variance:
+        min_centroids = centroids
+        min_variance = variance
 
     """ assign clusters """
     points_clusters = np.full(shape=200, fill_value="", dtype=object)  # array with the cluster of each point

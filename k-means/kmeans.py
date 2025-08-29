@@ -1,39 +1,9 @@
 import numpy as np
 import random
+from modules import *
 
 
-def euclidian_distance(centroids, point):
-    """
-    :return: array of distance from centroid_i to point
-    """
-
-    return ((centroids-point)**2).sum(axis=1)
-
-
-def aux_variance(cluster):  # todo: implement
-    """
-
-    :param cluster: array of vectors
-    :return: variance of this array
-    """
-    pass
-    v = 0
-    mean = np.sum(cluster)/len(cluster)
-
-
-def variance(clusters):
-    """
-
-    :param clusters: array of cluster that integrates dataset
-    :return: sommatory of the variance of each cluster (total system variance)
-    """
-    tv = 0
-    for cluster in clusters:
-        tv += aux_variance(cluster)
-    return tv
-
-
-def aux_kmeans(df, k: int, get_dist=euclidian_distance):
+def aux_kmeans(df, k: int, get_dist):
     """
     :df: dataframe representing dataset
     :k: amount of clusters
@@ -68,24 +38,23 @@ def aux_kmeans(df, k: int, get_dist=euclidian_distance):
     return centroids, clusters  # todo: recycle 'clusters' variable on variation measure
 
 
-def kmeans(df, k: int, get_dist=euclidian_distance):
+def kmeans(df, k: int = -1, get_dist=euclidian_distances, initializations: int = 15):
     """
-    
-    runs many instances of kmeans (different initializations) and get the one with the least variation
 
-    :return: centroids, array of each point belonging cluster
+    :param df: pandas dataframe representing dataset
+    :param k: amount of clusters
+    :param get_dist: vectorial distance function
+    :param initializations: how many instances of k-means to run before picking the best solution one
+    :return: array with centroids coordinates (k, 1) and array with clusters contents (k, len(cluster_i))
     """
+
+    # todo: if k==-1: compute best k and use it
 
     centroids, clusters = aux_kmeans(df, k, get_dist)
 
-    #todo: run aux_kmeans many times. for each result check if variance<min_variance. if it is: replace min_centroids and min_variance to it
-    variance = variance(clusters)
-    min_variance = 0
-    min_centroids = 0
+    """ calculate total variance of solution """  # todo: run aux_kmeans many times. for each result check if variance<min_variance. if it is: replace min_centroids and min_variance to it
 
-    if variance<min_variance:
-        min_centroids = centroids
-        min_variance = variance
+    solution_variance = variance(clusters, centroids)
 
     """ assign clusters """
     points_clusters = np.full(shape=200, fill_value="", dtype=object)  # array with the cluster of each point

@@ -3,7 +3,7 @@ import random
 from modules import *
 
 
-def aux_kmeans(df, k: int, get_dist):
+def aux_kmeans(df, k: int):
     """
     :df: dataframe representing dataset
     :k: amount of clusters
@@ -28,17 +28,17 @@ def aux_kmeans(df, k: int, get_dist):
     for i in range(30):  # todo: stop when detect saturation
         """ ASSIGN each datapoint to a cluster """
         for point in datapoints:
-            distances = get_dist(centroids, point)
+            distances = euclidian_distance(centroids, point)
             i_cluster = np.argmin(distances)
             clusters[i_cluster].append(point)
-        """ FIT each cluster to its datapoints mean """  # todo: the correct would be to find the position wich minimizes get_dist()  # for euclidian distance, this actually is the mean position
+        """ FIT each cluster to its datapoints mean """
         for i_cluster in range(k):
             centroids[i_cluster] = np.sum(clusters[i_cluster], axis=0)/len(clusters[i_cluster])
 
     return centroids, clusters
 
 
-def kmeans(df, k: int = -1, get_dist=euclidian_distances, initializations: int = 15):
+def kmeans(df, k: int = -1, initializations: int = 15):
     """
 
     :param df: pandas dataframe representing dataset
@@ -49,17 +49,17 @@ def kmeans(df, k: int = -1, get_dist=euclidian_distances, initializations: int =
     """
 
     """ optmize k """
-    if k == -1:  # todo: compute best k and use it
+    if k == -1:  # todo: how to pick k?
         pass
 
-    """ minimum solution """
+    """ find best solution """
     min_solution_variance = float('inf')
     min_centroids = []
     min_clusters = []  # todo: solve: unused
 
     for i in range(initializations):
         # compute new solution
-        centroids, clusters = aux_kmeans(df, k, get_dist)
+        centroids, clusters = aux_kmeans(df, k)
         solution_variance = variance(clusters, centroids)
         # compare to current best solution
         if solution_variance < min_solution_variance:
@@ -70,10 +70,9 @@ def kmeans(df, k: int = -1, get_dist=euclidian_distances, initializations: int =
     print(f"Total variance of best solution found: {min_solution_variance}")
 
     """ assign clusters """
-
-    points_clusters = np.full(shape=200, fill_value="", dtype=object)  # array with the cluster of each point
+    points_clusters = np.full(shape=df.shape[0], fill_value="", dtype=object)  # array with the cluster of each point
     for i, point in enumerate(df.iloc[:].values):
-        cluster_of_point = np.argmin(get_dist(min_centroids, point))
+        cluster_of_point = np.argmin(euclidian_distance(min_centroids, point))
         points_clusters[i] = cluster_of_point
 
     return min_centroids, points_clusters

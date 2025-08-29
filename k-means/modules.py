@@ -4,18 +4,7 @@ so the variance in each cluster is  somatory ( ||centroid-vi||**2 )
 """
 
 
-def euclidian_distances(centroids, point):  # todo: merge with euclidian_distance()
-    """
-
-    :param centroids:
-    :param point:
-    :return: array of Euclidean distances from centroid_i to point
-    """
-
-    return ((centroids-point)**2).sum(axis=1)
-
-
-def euclidian_distance(centroid, point):  # todo: merge with euclidian_distances()
+def euclidian_distance(centroid, point):
     """
 
     :param centroid:
@@ -23,7 +12,11 @@ def euclidian_distance(centroid, point):  # todo: merge with euclidian_distances
     :return: Euclidean distance between centroid and point
     """
 
-    return ((centroid - point) ** 2).sum()
+    if centroid.ndim == 1:  # distance from point to single centroid
+        return ((centroid - point) ** 2).sum(axis=0)
+
+    if centroid.ndim == 2:  # distance from point to multiple centroids - return array with pair-wise distances
+        return ((centroid - point) ** 2).sum(axis=1)
 
 
 def variance(clusters, centroids):  # somatory (variance of clusters)
@@ -36,7 +29,6 @@ def variance(clusters, centroids):  # somatory (variance of clusters)
 
 def variance_cluster(cluster, centroid):  # somatory (||centroid-vi||**2) = somatory (euclidian_distance(centroid, vi)**2)
     v = 0
-    # todo: get cluster. recalculate? pass through functions?
     for vector in cluster:
         v += euclidian_distance(centroid, vector)**2
     return v

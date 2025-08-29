@@ -18,7 +18,8 @@ df = pd.read_csv("../dataset/mall-customers.csv").drop('is_male', axis=1)
 """ 
 	run algorithm 
 """
-centroids, clusters = kmeans(df=df, k=5, initializations=60)
+centroids, clusters = kmeans(df=df, k=5, initializations=40)
+
 
 """ 
 	plot results 

@@ -3,11 +3,10 @@ import random
 from modules import *
 
 
-def aux_kmeans(df, k: int):
+def aux_kmeans(df, k: int, print_log: bool):
     """
     :df: dataframe representing dataset
     :k: amount of clusters
-    :get_dist: function to calculate distance from datapoint to each centroid. must return array of distances from point to centroid_i
 
     runs a single instance of kmeans (1 initialization)
 
@@ -21,11 +20,20 @@ def aux_kmeans(df, k: int):
     initial_centroids_i = np.array(random.sample(range(len(datapoints)), k))  # start with k random clusters represented by index of existing customer
     centroids = datapoints[initial_centroids_i]
 
-    """"""
-    clusters = []  # contains the array of vectors of each cluster
-    for i in range(k):
-        clusters.append([])
-    for i in range(30):  # todo: stop when detect saturation
+    """ repeat ASSIGN and FIT until saturation """
+    # pseudo initializations
+    previous_variance = 0
+    current_variance = 1
+
+    clusters = []
+
+    printlog(f"\n\nSTARTING INSTANCE OF KMEANS with random centroids\n", print_log)
+    printlog(f"Variance in each ASSIGN - FIT cycle\n", print_log)
+
+    while current_variance != previous_variance:
+        clusters = []  # contains the array of vectors of each cluster
+        for i in range(k):
+            clusters.append([])
         """ ASSIGN each datapoint to a cluster """
         for point in datapoints:
             distances = euclidian_distance(centroids, point)
@@ -34,17 +42,24 @@ def aux_kmeans(df, k: int):
         """ FIT each cluster to its datapoints mean """
         for i_cluster in range(k):
             centroids[i_cluster] = np.sum(clusters[i_cluster], axis=0)/len(clusters[i_cluster])
+        """ update variation """
+        previous_variance = current_variance
+        current_variance = variance(clusters, centroids)
 
-    return centroids, clusters
+        printlog(f"{current_variance}", print_log)
+    printlog("(saturation)", print_log)
+    printlog(f"\nthis instance converged to a local minimum with variance: {current_variance}", print_log)
+
+    return centroids, clusters, current_variance
 
 
-def kmeans(df, k: int = -1, initializations: int = 15):
+def kmeans(df, k: int = -1, initializations: int = 15, print_log: bool = False):
     """
 
     :param df: pandas dataframe representing dataset
     :param k: amount of clusters
-    :param get_dist: vectorial distance function
     :param initializations: how many instances of k-means to run before picking the best solution one
+    :param print_log: print log of execution
     :return: array with centroids coordinates (k, 1) and array with clusters contents (k, len(cluster_i))
     """
 
@@ -59,15 +74,14 @@ def kmeans(df, k: int = -1, initializations: int = 15):
 
     for i in range(initializations):
         # compute new solution
-        centroids, clusters = aux_kmeans(df, k)
-        solution_variance = variance(clusters, centroids)
+        centroids, clusters, solution_variance = aux_kmeans(df, k, print_log)
         # compare to current best solution
         if solution_variance < min_solution_variance:
             min_solution_variance = solution_variance
             min_centroids = centroids
             min_clusters = clusters
 
-    print(f"Total variance of best solution found: {min_solution_variance}")
+    printlog(f"\n\nTotal variance of best solution found: {min_solution_variance}\n\n", print_log)
 
     """ assign clusters """
     points_clusters = np.full(shape=df.shape[0], fill_value="", dtype=object)  # array with the cluster of each point

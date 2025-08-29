@@ -4,6 +4,11 @@ so the variance in each cluster is  somatory ( ||centroid-vi||**2 )
 """
 
 
+def printlog(string: str, print_log: bool):
+    if print_log:
+        print(string)
+
+
 def euclidian_distance(centroid, point):
     """
 

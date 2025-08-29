@@ -35,7 +35,7 @@ def aux_kmeans(df, k: int, get_dist):
         for i_cluster in range(k):
             centroids[i_cluster] = np.sum(clusters[i_cluster], axis=0)/len(clusters[i_cluster])
 
-    return centroids, clusters  # todo: recycle 'clusters' variable on variation measure
+    return centroids, clusters
 
 
 def kmeans(df, k: int = -1, get_dist=euclidian_distances, initializations: int = 15):
@@ -48,18 +48,32 @@ def kmeans(df, k: int = -1, get_dist=euclidian_distances, initializations: int =
     :return: array with centroids coordinates (k, 1) and array with clusters contents (k, len(cluster_i))
     """
 
-    # todo: if k==-1: compute best k and use it
+    """ optmize k """
+    if k == -1:  # todo: compute best k and use it
+        pass
 
-    centroids, clusters = aux_kmeans(df, k, get_dist)
+    """ minimum solution """
+    min_solution_variance = float('inf')
+    min_centroids = []
+    min_clusters = []  # todo: solve: unused
 
-    """ calculate total variance of solution """  # todo: run aux_kmeans many times. for each result check if variance<min_variance. if it is: replace min_centroids and min_variance to it
+    for i in range(initializations):
+        # compute new solution
+        centroids, clusters = aux_kmeans(df, k, get_dist)
+        solution_variance = variance(clusters, centroids)
+        # compare to current best solution
+        if solution_variance < min_solution_variance:
+            min_solution_variance = solution_variance
+            min_centroids = centroids
+            min_clusters = clusters
 
-    solution_variance = variance(clusters, centroids)
+    print(f"Total variance of best solution found: {min_solution_variance}")
 
     """ assign clusters """
+
     points_clusters = np.full(shape=200, fill_value="", dtype=object)  # array with the cluster of each point
     for i, point in enumerate(df.iloc[:].values):
-        cluster_of_point = np.argmin(get_dist(centroids, point))
+        cluster_of_point = np.argmin(get_dist(min_centroids, point))
         points_clusters[i] = cluster_of_point
 
-    return centroids, points_clusters
+    return min_centroids, points_clusters

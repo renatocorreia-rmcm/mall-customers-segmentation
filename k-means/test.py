@@ -1,13 +1,36 @@
-import pandas as pd
-import numpy as np
-from kmeans import kmeans
-
-df = pd.read_csv("dataset/mall-customers.csv")
+""""""
 
 
-centroids = kmeans(df, 5) 
-print(centroids)
+""" 
+	dependencies 
+"""
+import pandas as pd  # load dataframe
+from kmeans import kmeans  # the algorithm
+import matplotlib.pyplot as plt  # plot
 
-color = np.array(["red", "green", "blue", "purple", "cyan"])
-point_colors = np.full(shape=200, fill_value="", dtype=object)
-# make array of colors based on argmin dist(point, cluster)
+
+""" 
+	load dataframe
+"""
+df = pd.read_csv("../dataset/mall-customers.csv").drop('is_male', axis=1)
+
+
+""" 
+	run algorithm 
+"""
+centroids, clusters = kmeans(df, 5)
+
+
+""" 
+	plot results 
+"""
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+ax.scatter(  # add datapoints
+	df['age'].values, df['annual-income'].values, df['spending-score'].values, c=clusters, cmap='rainbow'
+)
+ax.scatter(  # add centroids
+	centroids[:, 0], centroids[:, 1], centroids[:, 2], color="black", marker='D'
+)
+ax.set_xlabel('age'); ax.set_ylabel('annual-icome'); ax.set_zlabel('spending-score')  # set label for each axis
+plt.show()

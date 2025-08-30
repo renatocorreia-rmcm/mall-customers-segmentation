@@ -3,7 +3,7 @@ import random
 from modules import *
 
 
-def aux_kmeans(df, k: int, print_log: bool):
+def aux_kmeans(dataframe, k: int, print_log: bool):
     """
     :df: dataframe representing dataset
     :k: amount of clusters
@@ -14,7 +14,7 @@ def aux_kmeans(df, k: int, print_log: bool):
     """
 
     """ initialize datapoints """  # as array of vectors
-    datapoints = df.iloc[:].values  # each datapoint is a 4D vector representing a costumer
+    datapoints = dataframe.iloc[:].values  # each datapoint is a 4D vector representing a costumer
 
     """ initialize centroids """  # as random existing datapoints
     initial_centroids_i = np.array(random.sample(range(len(datapoints)), k))  # start with k random clusters represented by index of existing customer
@@ -41,7 +41,7 @@ def aux_kmeans(df, k: int, print_log: bool):
             clusters[i_cluster].append(point)
         """ FIT each cluster to its datapoints mean """
         for i_cluster in range(k):
-            centroids[i_cluster] = np.sum(clusters[i_cluster], axis=0)/len(clusters[i_cluster])
+            centroids[i_cluster] = np.sum(clusters[i_cluster], axis=0) / len(clusters[i_cluster])
         """ update variation """
         previous_variance = current_variance
         current_variance = variance(clusters, centroids)
@@ -53,10 +53,10 @@ def aux_kmeans(df, k: int, print_log: bool):
     return centroids, clusters, current_variance
 
 
-def kmeans(df, k: int = -1, initializations: int = 15, print_log: bool = False):
+def kmeans(dataframe, k: int = -1, initializations: int = 15, print_log: bool = False):
     """
 
-    :param df: pandas dataframe representing dataset
+    :param dataframe: pandas dataframe representing dataset
     :param k: amount of clusters
     :param initializations: how many instances of k-means to run before picking the best solution one
     :param print_log: print log of execution
@@ -74,7 +74,7 @@ def kmeans(df, k: int = -1, initializations: int = 15, print_log: bool = False):
 
     for i in range(initializations):
         # compute new solution
-        centroids, clusters, solution_variance = aux_kmeans(df, k, print_log)
+        centroids, clusters, solution_variance = aux_kmeans(dataframe, k, print_log)
         # compare to current best solution
         if solution_variance < min_solution_variance:
             min_solution_variance = solution_variance
@@ -84,8 +84,8 @@ def kmeans(df, k: int = -1, initializations: int = 15, print_log: bool = False):
     printlog(f"\n\nTotal variance of best solution found: {min_solution_variance}\n\n", print_log)
 
     """ assign clusters """
-    points_clusters = np.full(shape=df.shape[0], fill_value="", dtype=object)  # array with the cluster of each point
-    for i, point in enumerate(df.iloc[:].values):
+    points_clusters = np.full(shape=dataframe.shape[0], fill_value="", dtype=object)  # array with the cluster of each point
+    for i, point in enumerate(dataframe.iloc[:].values):
         cluster_of_point = np.argmin(euclidian_distance(min_centroids, point))
         points_clusters[i] = cluster_of_point
 
